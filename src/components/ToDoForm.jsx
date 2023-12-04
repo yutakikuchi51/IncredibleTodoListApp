@@ -1,20 +1,40 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, StyleSheet, TextInput, Button } from 'react-native';
 
 export default function ToDoForm ({ addTask }) {
 
-  const [taskText, setTaskText] = React.useState('');
+  const [taskText, setTaskText] = useState('');
+  const [tasks, setTasks] = useState([]);
+
+  useEffect(() => {
+    const tasksData = require('../data/tasks.json');
+    setTasks(tasksData.tasks); 
+  }, []);
+
+    const handleAddTask = () => {
+      if (tasks.length > 0) {
+        const randomIndex = Math.floor(Math.random() * tasks.length);
+        const selectedTask = tasks[randomIndex];
+        setTaskText(selectedTask);
+      }
+    };
 
     return (
+      <View style={styles.container}>
       <View style={styles.form}>
         <TextInput
           style={styles.input}
-          placeholder="Add a new task..."
+          value={taskText}
+          placeholder="Add new task..."
           onChangeText={(text) => setTaskText(text)}
         />
+      </View>
+      <View style={styles.buttonContainer}>
+        <Button title="Generate Random Task" onPress={handleAddTask} />
         <Button title="Add Task" onPress={() => addTask(taskText)} />
       </View>
-    );
+    </View>
+  );
 }      
 
 const styles = StyleSheet.create({
@@ -32,6 +52,16 @@ const styles = StyleSheet.create({
       paddingHorizontal: 10,
       paddingVertical: 5,
       marginRight: 10,
+    },
+    container: {
+      flex: 1,
+      justifyContent: 'center', 
+      alignItems: 'center', 
+    },
+    buttonContainer: {
+      flexDirection: 'row', 
+      justifyContent: 'space-around',
+      width: '100%', 
     },
 });
   
